@@ -447,51 +447,60 @@ public class Main {
         scanner.nextLine();
         System.out.println("Введите имя проекта");
         String name = scanner.nextLine();
-        System.out.println("Введите описание задачи:");
-        String description = scanner.nextLine();
-        System.out.print("Введите дату дедлайна задачи в формате yyyy-MM-dd: ");
-        String dataStr = scanner.next();
-        LocalDate date = LocalDate.parse(dataStr);
-        scanner.nextLine();
-        System.out.println("Введите имя ответсвенного сотрудника");
-        String employeeName = scanner.nextLine();
-
-
-        Project.addNewTaskInProject(name, description, date, employeeName);
-    }
-
-    private static void showAllProjectTasks() {
-        scanner.nextLine();
-        System.out.println("Введите название проекта");
-        String projectName = scanner.nextLine();
-        System.out.println("*********************************");
-        System.out.println("Список всех задач проекта: " + projectName);
-        Project.printAllTasks(projectName);
-    }
-
-    private static void showAllEmployeeTasks() {
-        scanner.nextLine();
-        System.out.println("Введите имя сотрудника");
-        String employeeName = scanner.nextLine();
-        System.out.println("*********************************");
-        System.out.println("Список всех задач сотрудника: " + employeeName);
-        Employee.printAllTasks(employeeName);
-    }
-    //-------------------------------------------------
-
-    private static void checkValueInt() {
-        while (!scanner.hasNextInt()) {
-            System.out.println("Введите пожалуйста целое число");
-            scanner.next();
+        Project project = Project.foundProjectByName(name);
+        boolean isProjectExist = Project.isProjectExist(name);
+        if (!isProjectExist) {
+            LOGGER.warn("Проекта с таким название не найдено!");
         }
-    }
+        else if (project.getStatus() == ProjectStatus.PASSIV) {
+            LOGGER.warn("Ошибка добавления задачи. Проект " + name + "Имеет статус PASSIV!");
+        }else {
+            System.out.println("Введите описание задачи:");
+            String description = scanner.nextLine();
+            System.out.print("Введите дату дедлайна задачи в формате yyyy-MM-dd: ");
+            String dataStr = scanner.next();
+            LocalDate date = LocalDate.parse(dataStr);
+            scanner.nextLine();
+            System.out.println("Введите имя ответсвенного сотрудника");
+            String employeeName = scanner.nextLine();
 
-    private static void checkValueDouble() {
-        while (!scanner.hasNextDouble()) {
-            System.out.println("Введите пожалуйста число!");
-            scanner.next();
+
+            Project.addNewTaskInProject(name, description, date, employeeName);
         }
+}
+
+private static void showAllProjectTasks() {
+    scanner.nextLine();
+    System.out.println("Введите название проекта");
+    String projectName = scanner.nextLine();
+    System.out.println("*********************************");
+    System.out.println("Список всех задач проекта: " + projectName);
+    Project.printAllTasks(projectName);
+}
+
+private static void showAllEmployeeTasks() {
+    scanner.nextLine();
+    System.out.println("Введите имя сотрудника");
+    String employeeName = scanner.nextLine();
+    System.out.println("*********************************");
+    System.out.println("Список всех задач сотрудника: " + employeeName);
+    Employee.printAllTasks(employeeName);
+}
+//-------------------------------------------------
+
+private static void checkValueInt() {
+    while (!scanner.hasNextInt()) {
+        System.out.println("Введите пожалуйста целое число");
+        scanner.next();
     }
+}
+
+private static void checkValueDouble() {
+    while (!scanner.hasNextDouble()) {
+        System.out.println("Введите пожалуйста число!");
+        scanner.next();
+    }
+}
 
 
 }
