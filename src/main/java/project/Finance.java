@@ -56,7 +56,6 @@ public class Finance implements Serializable {
                 if(type == TypeOfTransaction.EXPENSE){
                     balance = balance-amount;
                     LOGGER.info("Расход категории " + category + " на сумму " + amount +" был успешно добавлен в список");
-                    LOGGER.info("Актуальный балланс " + balance);
                 }
                 else{
                     balance = balance+amount;
@@ -80,6 +79,8 @@ public class Finance implements Serializable {
             transactions.stream().forEach(System.out::println);
         }
     }
+
+
 
 
 

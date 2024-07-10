@@ -319,15 +319,7 @@ public class Main {
                 }
                 case 4: {
                     System.out.println("Обновляем статус проекта.");
-                    System.out.println("Введите новый статус проекта: ACTIV/PASSIV");
-                    String statusStr = scanner.next();
-                    ProjectStatus projectStatus;
-                    if (statusStr.equalsIgnoreCase("ACTIV")) {
-                        projectStatus = ProjectStatus.ACTIV;
-                    } else {
-                        projectStatus = ProjectStatus.PASSIV;
-                    }
-                    Project.statusUpdate(projectName, projectStatus);
+                    updateProjectStatus(projectName);
                     break;
                 }
                 default: {
@@ -337,6 +329,18 @@ public class Main {
             }
         }
 
+    }
+
+    private static void updateProjectStatus(String projectName) {
+        System.out.println("Введите новый статус проекта: ACTIV/PASSIV");
+        String statusStr = scanner.next();
+        ProjectStatus projectStatus;
+        if (statusStr.equalsIgnoreCase("ACTIV")) {
+            projectStatus = ProjectStatus.ACTIV;
+        } else {
+            projectStatus = ProjectStatus.PASSIV;
+        }
+        Project.statusUpdate(projectName, projectStatus);
     }
 
 
@@ -411,9 +415,16 @@ public class Main {
         System.out.println("Введите cумму расхода (только положительные числа!)");
         checkValueDouble();
         double amount = scanner.nextDouble();
-        System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
-        String dataStr = scanner.next();
-        LocalDate date = LocalDate.parse(dataStr);
+        LocalDate date = null;
+        while (date == null) {
+            try {
+                System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
+                String dataStr = scanner.next();
+                date = LocalDate.parse(dataStr);
+            } catch (DateTimeParseException exception) {
+                LOGGER.warn("Некорректный формат даты. Пожалуйста, используйте формат yyyy-MM-dd.");
+            }
+        }
         scanner.nextLine();
         System.out.println("Введите категорию расхода:");
         String category = scanner.nextLine();
