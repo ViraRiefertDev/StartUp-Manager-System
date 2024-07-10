@@ -1,10 +1,15 @@
 package project;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.SQLOutput;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class Main {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -346,11 +351,16 @@ public class Main {
         System.out.print("Введите должность сотрудника: ");
         String position = scanner.nextLine();
 
-        System.out.print("Введите дату начала работы сотрудника в формате yyyy-MM-dd: ");
-        String dataStr = scanner.next();
-        LocalDate date = LocalDate.parse(dataStr);
-
-
+        LocalDate date = null;
+        while (date == null) {
+            try {
+                System.out.print("Введите дату начала работы сотрудника в формате yyyy-MM-dd: ");
+                String dataStr = scanner.next();
+                date = LocalDate.parse(dataStr);
+            } catch (DateTimeParseException exception) {
+                LOGGER.warn("Некорректный формат даты. Пожалуйста, используйте формат yyyy-MM-dd.");
+            }
+        }
         Employee newEmployee = new Employee(name, position, date);
         Employee.addNewEmployee(newEmployee);
     }
@@ -376,16 +386,22 @@ public class Main {
         System.out.println("Введите cумму дохода (только положительные числа!)");
         checkValueDouble();
         double amount = scanner.nextDouble();
-        System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
-        String dataStr = scanner.next();
-        LocalDate date = LocalDate.parse(dataStr);
+        LocalDate date = null;
+        while (date == null) {
+            try {
+                System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
+                String dataStr = scanner.next();
+                date = LocalDate.parse(dataStr);
+            } catch (DateTimeParseException exception) {
+                LOGGER.warn("Некорректный формат даты. Пожалуйста, используйте формат yyyy-MM-dd.");
+            }
+        }
         scanner.nextLine();
         System.out.println("Введите категорию дохода:");
         String category = scanner.nextLine();
 
         System.out.println("");
         Project.makeIncomeTransaction(name, amount, date, category);
-        return;
     }
 
     private static void addExpenseTransaction() {
