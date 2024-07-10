@@ -272,4 +272,17 @@ public class Project implements Serializable {
         }
 
     }
+
+    //Метод вывода на экран финансовой статистики по всем проектам
+    public static void displayFinanceStatistics(){
+        for (Project project : allProjects) {
+            double totalIncome = project.finance.getTotalIncome();
+            double totalExpense = project.finance.getTotalExpense();
+            System.out.println("Имя проекта: " + project.name);
+            System.out.println("Актуальный бюджет проекта: " + project.budget);
+            System.out.println("Общая сумма доходов: " + totalIncome);
+            System.out.println("Общая сумма расходов: " + totalExpense);
+            System.out.println("-----------------------------------");
+        }
+    }
 }

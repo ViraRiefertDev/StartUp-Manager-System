@@ -166,6 +166,7 @@ public class Main {
             System.out.println("1. Добавить доход");
             System.out.println("2. Добавить расход");
             System.out.println("3. Показать все проведенные финансовые операции для проекта");
+            System.out.println("4. Показать финансовую статистику по всем проектам");
             System.out.println("**********************************");
             System.out.print("Введите Ваш выбор: ");
             checkValueInt();
@@ -194,6 +195,11 @@ public class Main {
                     System.out.println("Введите имя проекта");
                     String projectName = scanner.nextLine();
                     Project.printAllTransactions(projectName);
+                    break;
+                }
+                case 4: {
+                    System.out.println("Вы выбрали показать фин. статистику по всем проектам");
+                    Project.displayFinanceStatistics();
                     break;
                 }
                 default: {

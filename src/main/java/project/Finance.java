@@ -80,8 +80,27 @@ public class Finance implements Serializable {
         }
     }
 
+    //метод возвращает общую сумму доходов по всем транзакциям проекта
+    public double getTotalIncome(){
+        double totalIncome = 0;
+        for (Transaction transaction : transactions) {
+            if(transaction.type==TypeOfTransaction.INCOME){
+              totalIncome += transaction.amount;
+            }
+        }
+        return totalIncome;
+    }
 
-
+    //метод возвращает общую сумму расходов по всем транзакциям проекта
+    public double getTotalExpense(){
+        double totalExpense = 0;
+        for (Transaction transaction : transactions) {
+            if(transaction.type==TypeOfTransaction.EXPENSE){
+                totalExpense += transaction.amount;
+            }
+        }
+        return totalExpense;
+    }
 
 
 }
