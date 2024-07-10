@@ -221,6 +221,7 @@ public class Main {
             System.out.println("1. Добавить новую задачу");
             System.out.println("2. Посмотреть список всех задач проекта");
             System.out.println("3. Посмотреть список всех задач сотрудника");
+            System.out.println("4. Изменить статус задачи проекта");
             System.out.println("**********************************");
             System.out.print("Введите Ваш выбор: ");
             checkValueInt();
@@ -247,6 +248,37 @@ public class Main {
                     System.out.println("Вы выбрали посмотреть список всех задач сотрудника");
                     showAllEmployeeTasks();
                     break;
+                }
+                case 4: {
+                    System.out.println("Вы выбрали изменить статус задачи проекта");
+                    scanner.nextLine();
+                    System.out.println("Введите название проекта");
+                    String projectName = scanner.nextLine();
+                    System.out.println("Введите описание задачи, статус которой вы хотите изменить");
+                    String taskDescription = scanner.nextLine();
+                    TaskStatus newStatus = null;
+                    while (newStatus == null) {
+                        System.out.println("Введите новый статус задачи NEW/IN_PROGRESS/COMPLETED");
+                        String newTaskStatusStr = scanner.nextLine();
+                        switch (newTaskStatusStr) {
+                            case "NEW": {
+                                newStatus = TaskStatus.NEW;
+                                break;
+                            }
+                            case "IN_PROGRESS": {
+                                newStatus = TaskStatus.IN_PROGRESS;
+                                break;
+                            }
+                            case "COMPLETED": {
+                                newStatus = TaskStatus.COMPLETED;
+                                break;
+                            }
+                            default: {
+                                LOGGER.warn("Вы ввели инвалидный статус.");
+                            }
+                        }
+                    }
+                    Project.updateTaskStatusInProject(projectName,taskDescription,newStatus);
                 }
                 default: {
                     System.out.println("Введите число от 0 до " + 3);
@@ -451,10 +483,9 @@ public class Main {
         boolean isProjectExist = Project.isProjectExist(name);
         if (!isProjectExist) {
             LOGGER.warn("Проекта с таким название не найдено!");
-        }
-        else if (project.getStatus() == ProjectStatus.PASSIV) {
+        } else if (project.getStatus() == ProjectStatus.PASSIV) {
             LOGGER.warn("Ошибка добавления задачи. Проект " + name + "Имеет статус PASSIV!");
-        }else {
+        } else {
             System.out.println("Введите описание задачи:");
             String description = scanner.nextLine();
             System.out.print("Введите дату дедлайна задачи в формате yyyy-MM-dd: ");
@@ -467,40 +498,40 @@ public class Main {
 
             Project.addNewTaskInProject(name, description, date, employeeName);
         }
-}
+    }
 
-private static void showAllProjectTasks() {
-    scanner.nextLine();
-    System.out.println("Введите название проекта");
-    String projectName = scanner.nextLine();
-    System.out.println("*********************************");
-    System.out.println("Список всех задач проекта: " + projectName);
-    Project.printAllTasks(projectName);
-}
+    private static void showAllProjectTasks() {
+        scanner.nextLine();
+        System.out.println("Введите название проекта");
+        String projectName = scanner.nextLine();
+        System.out.println("*********************************");
+        System.out.println("Список всех задач проекта: " + projectName);
+        Project.printAllTasks(projectName);
+    }
 
-private static void showAllEmployeeTasks() {
-    scanner.nextLine();
-    System.out.println("Введите имя сотрудника");
-    String employeeName = scanner.nextLine();
-    System.out.println("*********************************");
-    System.out.println("Список всех задач сотрудника: " + employeeName);
-    Employee.printAllTasks(employeeName);
-}
+    private static void showAllEmployeeTasks() {
+        scanner.nextLine();
+        System.out.println("Введите имя сотрудника");
+        String employeeName = scanner.nextLine();
+        System.out.println("*********************************");
+        System.out.println("Список всех задач сотрудника: " + employeeName);
+        Employee.printAllTasks(employeeName);
+    }
 //-------------------------------------------------
 
-private static void checkValueInt() {
-    while (!scanner.hasNextInt()) {
-        System.out.println("Введите пожалуйста целое число");
-        scanner.next();
+    private static void checkValueInt() {
+        while (!scanner.hasNextInt()) {
+            System.out.println("Введите пожалуйста целое число");
+            scanner.next();
+        }
     }
-}
 
-private static void checkValueDouble() {
-    while (!scanner.hasNextDouble()) {
-        System.out.println("Введите пожалуйста число!");
-        scanner.next();
+    private static void checkValueDouble() {
+        while (!scanner.hasNextDouble()) {
+            System.out.println("Введите пожалуйста число!");
+            scanner.next();
+        }
     }
-}
 
 
 }

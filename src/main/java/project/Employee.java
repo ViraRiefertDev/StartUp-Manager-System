@@ -118,7 +118,7 @@ public class Employee implements Serializable {
         }
     }
 
-    public static Employee foundEmployeeByName(String employeeName){
+    public static Employee foundEmployeeByName(String employeeName) {
         return allEmployees.stream().filter(e -> e.getName().equals(employeeName)).findFirst().orElse(null);
     }
 
@@ -163,10 +163,16 @@ public class Employee implements Serializable {
     }
 
     //метод вывода списка задач сотрудника на экран
-    public static void printAllTasks(String employeeName){
-        if(isEmployeeExist(employeeName)){
+    public static void printAllTasks(String employeeName) {
+        if (isEmployeeExist(employeeName)) {
             Employee employee = foundEmployeeByName(employeeName);
-            System.out.println(employee.tasks);
+            if (!employee.tasks.isEmpty()) {
+                System.out.println(employee.tasks);
+            }else{
+                System.out.println("Сотруднику " + employeeName + " еще не было добавлено ни одной задачи!");
+            }
+        }else{
+            LOGGER.warn("Cотрудника с именем " + employeeName + " не найдено");
         }
 
     }

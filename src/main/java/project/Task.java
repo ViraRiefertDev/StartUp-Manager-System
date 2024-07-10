@@ -32,6 +32,11 @@ public class Task implements Serializable {
                 + status + " Имя исполнителя: " + employee.getName() + "\n****************************";
     }
 
+    //метод изменения статуса задачи
+    public void updateTaskStatus(TaskStatus newStatus){
+        this.status = newStatus;
+    }
+
 
 
 

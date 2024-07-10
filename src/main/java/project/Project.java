@@ -162,35 +162,36 @@ public class Project implements Serializable {
             }
         }
     }
+
     //------------------------------------------------------------------------------------
     //метод добавления доходной транзакции
-    public static void makeIncomeTransaction(String projectName, double amount, LocalDate date, String category){
+    public static void makeIncomeTransaction(String projectName, double amount, LocalDate date, String category) {
         TypeOfTransaction type = TypeOfTransaction.INCOME;
-        makeTransaction(projectName,type,amount,date,category);
+        makeTransaction(projectName, type, amount, date, category);
     }
 
-    public static void makeExpenseTransaction(String projectName, double amount, LocalDate date, String category){
+    public static void makeExpenseTransaction(String projectName, double amount, LocalDate date, String category) {
         TypeOfTransaction type = TypeOfTransaction.EXPENSE;
-        makeTransaction(projectName,type,amount,date,category);
+        makeTransaction(projectName, type, amount, date, category);
     }
+
     //метод проведения финансовой операции для проекта
     private static void makeTransaction(String projectName, TypeOfTransaction type, double amount, LocalDate date, String category) {
         boolean isProjectFount = isProjectExist(projectName);
         if (isProjectFount) {
             Project project = foundProjectByName(projectName);
-             project.addNewTransaction(project, type,amount,date,category);
-             project.setBudget(project.finance.getBalance());
+            project.addNewTransaction(project, type, amount, date, category);
+            project.setBudget(project.finance.getBalance());
         }
     }
 
-    private void addNewTransaction(Project project,TypeOfTransaction type, double amount, LocalDate date, String category){
-        project.finance.addNewTransaction(type,amount,date,category);
+    private void addNewTransaction(Project project, TypeOfTransaction type, double amount, LocalDate date, String category) {
+        project.finance.addNewTransaction(type, amount, date, category);
     }
 
 
-
     //метод печать всех транзакций проекта
-    public static void printAllTransactions(String projectName){
+    public static void printAllTransactions(String projectName) {
         Project project = foundProjectByName(projectName);
         project.finance.printAllTransaction();
     }
@@ -207,7 +208,7 @@ public class Project implements Serializable {
         }
     }
 
-    public static Project foundProjectByName(String projectName){
+    public static Project foundProjectByName(String projectName) {
         return allProjects.stream().filter(p -> p.getName().equals(projectName)).findFirst().orElse(null);
     }
 
@@ -265,16 +266,22 @@ public class Project implements Serializable {
     }
 
     //метод вывода списка задач проекта на экран
-    public static void printAllTasks(String projectName){
-        if(isProjectExist(projectName)){
+    public static void printAllTasks(String projectName) {
+        if (isProjectExist(projectName)) {
             Project project = foundProjectByName(projectName);
-            System.out.println(project.tasks);
+            if (!project.tasks.isEmpty()) {
+                System.out.println(project.tasks);
+            } else {
+                System.out.println("В проект " + projectName + " еще не было добавлено ни одной задачи!");
+            }
+        } else {
+            LOGGER.warn("Проекта с именем " + projectName + " не найдено");
         }
 
     }
 
     //Метод вывода на экран финансовой статистики по всем проектам
-    public static void displayFinanceStatistics(){
+    public static void displayFinanceStatistics() {
         for (Project project : allProjects) {
             double totalIncome = project.finance.getTotalIncome();
             double totalExpense = project.finance.getTotalExpense();
@@ -285,4 +292,30 @@ public class Project implements Serializable {
             System.out.println("-----------------------------------");
         }
     }
+
+    //методы изменения статуса задачи
+    private void updateTaskStatusByDescription(String description, TaskStatus newStatus) {
+        boolean isFound = false;
+        for (Task task : tasks) {
+            if (task.getDescription().equals(description)) {
+                isFound = true;
+                task.updateTaskStatus(newStatus);
+                LOGGER.info("статус задачи " + description + " был успешно обновлен! Новый статус: " + newStatus);
+            }
+        }
+        if(!isFound){
+            LOGGER.error("Задачи с описанием :\n" + description + "\n не найдено");
+        }
+    }
+
+    public static void updateTaskStatusInProject(String projectName, String description, TaskStatus newStatus) {
+        Project project = Project.foundProjectByName(projectName);
+        if (project != null) {
+            project.updateTaskStatusByDescription(description, newStatus);
+        } else {
+            LOGGER.error("Проект с именем " + projectName + " не найден!");
+        }
+    }
+
+
 }
