@@ -6,12 +6,21 @@ import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class Project {
+public class Project implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(Project.class);
 
     private static List<Project> allProjects;
@@ -30,8 +39,13 @@ public class Project {
 
     //Инициализация статичного поля allProjects
     static {
-        allProjects = new ArrayList<>();
-        //todo метод считывания из файла всех проектов
+        String fileName = "projects.ser";
+        File file = new File(fileName);
+        if (file.exists()) {
+            deserializeProjects();
+        } else {
+            allProjects = new ArrayList<>();
+        }
     }
 
     public Project(String name, String description, double budget) {
@@ -42,7 +56,7 @@ public class Project {
         this.tasks = new ArrayList<>(20);
         this.employees = new ArrayList<>(5);
         this.status = ProjectStatus.ACTIV;
-        finance = new Finance();
+        finance = new Finance(budget);
     }
 
     @Override
@@ -150,6 +164,19 @@ public class Project {
         }
     }
 
+    //метод проведения финансовой операции для проекта
+    public static void makeTransaction(String projectName, TypeOfTransaction type, double amount, LocalDate date, String category) {
+        boolean isProjectFount = isProjectExist(projectName);
+        if (isProjectFount) {
+            allProjects.stream().map(project -> {
+                if (project.getName().equals(projectName)) {
+                    project.getFinance().addNewTransaction(type, amount, date, category);
+                }
+                return project;
+            });
+        }
+    }
+
 
     //------------------------------------------------------------------------------------
     //проверка существует ли такой проект в списке
@@ -171,4 +198,25 @@ public class Project {
         }
     }
     //-------------------------------------------------------------------------------------
+
+    //Метод сериализации списка проектов
+    public static void serializeProjects() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("projects.ser"))) {
+            oos.writeObject(allProjects);
+            LOGGER.info("Список проектов был сериализован в файл rojects.ser");
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    //Метод десериализации списка объектов
+    public static void deserializeProjects() {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("projects.ser"))) {
+            allProjects = (List<Project>) ois.readObject();
+            LOGGER.info("Файл projects.ser был успешно десериализован, и проекты сохранены в список проектов!");
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 }

@@ -5,13 +5,21 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class Employee {
+public class Employee implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(Employee.class);
 
     private static List<Employee> allEmployees;
@@ -26,8 +34,13 @@ public class Employee {
 
     //Инициализация статичного поля allEmployees
     static {
-        allEmployees = new ArrayList<>();
-        //todo метод считывания из файла всех сотрудников
+        String fileName = "employee.ser";
+        File file = new File(fileName);
+        if (file.exists()) {
+            deserializeProjects();
+        } else {
+            allEmployees = new ArrayList<>();
+        }
     }
 
     public Employee(String name, String position, LocalDate startDate) {
@@ -114,6 +127,27 @@ public class Employee {
         }
     }
     //-------------------------------------------------------------------------------------
+
+    //Метод сериализации списка сотрудников
+    public static void serializeProjects() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("employee.ser"))) {
+            oos.writeObject(allEmployees);
+            LOGGER.info("Список проектов был сериализован в файл rojects.ser");
+        } catch (IOException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
+
+    //Метод десериализации списка объектов
+    public static void deserializeProjects() {
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("employee.ser"))) {
+            allEmployees = (List<Employee>) ois.readObject();
+            LOGGER.info("Файл projects.ser был успешно десериализован, и проекты сохранены в список проектов!");
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
 
 
 }
