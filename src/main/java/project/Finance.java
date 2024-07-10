@@ -1,5 +1,6 @@
 package project;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import java.util.List;
 public class Finance implements Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class);
+    @Getter
     private double balance;
     private List<Transaction> transactions; //Лист записей о доходах и расходах
 
@@ -33,6 +35,12 @@ public class Finance implements Serializable {
             this.date = date;
             this.category = category;
         }
+
+        @Override
+        public String toString() {
+            return "++++++++++++++\n" + "Тип транзакции " + this.type + " - Сумма: " + amount + ", - Дата: "
+                    + date + "\nКатегория: " + category +"\n++++++++++++++";
+        }
     }
 
 
@@ -47,16 +55,32 @@ public class Finance implements Serializable {
             }else{
                 if(type == TypeOfTransaction.EXPENSE){
                     balance = balance-amount;
+                    LOGGER.info("Расход категории " + category + " на сумму " + amount +" был успешно добавлен в список");
+                    LOGGER.info("Актуальный балланс " + balance);
                 }
                 else{
                     balance = balance+amount;
+                    LOGGER.info("Доход категории " + category + " на сумму " + amount +" был успешно добавлен в список");
                 }
                 Transaction transaction = new Transaction(type, amount, date, category);
                 transactions.add(transaction);
-                LOGGER.info("Транзацкия прошла успешно. На счету осталось: " + balance);
+                LOGGER.info("Актуальный балланс " + balance);
+
             }
 
         }
     }
+
+    //метод печати всех транзакций
+    public void printAllTransaction(){
+        if(transactions.isEmpty()){
+            System.out.println("Не было произведено еще ни одной транзакции!");
+        }
+        else{
+            transactions.stream().forEach(System.out::println);
+        }
+    }
+
+
 
 }

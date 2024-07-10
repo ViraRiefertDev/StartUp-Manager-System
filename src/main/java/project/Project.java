@@ -2,7 +2,6 @@ package project;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,24 +162,43 @@ public class Project implements Serializable {
             }
         }
     }
+    //------------------------------------------------------------------------------------
+    //метод добавления доходной транзакции
+    public static void makeIncomeTransaction(String projectName, double amount, LocalDate date, String category){
+        TypeOfTransaction type = TypeOfTransaction.INCOME;
+        makeTransaction(projectName,type,amount,date,category);
+    }
 
+    public static void makeExpenseTransaction(String projectName, double amount, LocalDate date, String category){
+        TypeOfTransaction type = TypeOfTransaction.EXPENSE;
+        makeTransaction(projectName,type,amount,date,category);
+    }
     //метод проведения финансовой операции для проекта
-    public static void makeTransaction(String projectName, TypeOfTransaction type, double amount, LocalDate date, String category) {
+    private static void makeTransaction(String projectName, TypeOfTransaction type, double amount, LocalDate date, String category) {
         boolean isProjectFount = isProjectExist(projectName);
         if (isProjectFount) {
-            allProjects.stream().map(project -> {
-                if (project.getName().equals(projectName)) {
-                    project.getFinance().addNewTransaction(type, amount, date, category);
-                }
-                return project;
-            });
+            Project project = foundProjectByName(projectName);
+             project.addNewTransaction(project, type,amount,date,category);
+             project.setBudget(project.finance.getBalance());
         }
+    }
+
+    private void addNewTransaction(Project project,TypeOfTransaction type, double amount, LocalDate date, String category){
+        project.finance.addNewTransaction(type,amount,date,category);
+    }
+
+
+
+    //метод печать всех транзакций проекта
+    public static void printAllTransactions(String projectName){
+        Project project = foundProjectByName(projectName);
+        project.finance.printAllTransaction();
     }
 
 
     //------------------------------------------------------------------------------------
     //проверка существует ли такой проект в списке
-    private static boolean isProjectExist(Project projectToCheck) {
+    public static boolean isProjectExist(Project projectToCheck) {
         if (!allProjects.isEmpty()) {
             return allProjects.stream()
                     .anyMatch(project -> project.getName().equals(projectToCheck.getName()));
@@ -189,7 +207,11 @@ public class Project implements Serializable {
         }
     }
 
-    private static boolean isProjectExist(String projectName) {
+    public static Project foundProjectByName(String projectName){
+        return allProjects.stream().filter(p -> p.getName().equals(projectName)).findFirst().orElse(null);
+    }
+
+    public static boolean isProjectExist(String projectName) {
         if (!allProjects.isEmpty()) {
             return allProjects.stream()
                     .anyMatch(project -> project.getName().equals(projectName));
@@ -203,7 +225,7 @@ public class Project implements Serializable {
     public static void serializeProjects() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("projects.ser"))) {
             oos.writeObject(allProjects);
-            LOGGER.info("Список проектов был сериализован в файл rojects.ser");
+            LOGGER.info("Список проектов был сериализован в файл projects.ser");
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
@@ -218,5 +240,36 @@ public class Project implements Serializable {
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.error(e.getMessage());
         }
+    }
+
+
+    //-------------------------------------------------------------------------------------
+    //Метод добавления новой задачи в проект
+    public static void addNewTaskInProject(String projectName, String description, LocalDate deadline, String employeeName) {
+        if (isProjectExist(projectName)) {
+            if (Employee.isEmployeeExist(employeeName)) {
+                Project project = foundProjectByName(projectName);
+                Employee employee = Employee.foundEmployeeByName(employeeName);
+                Task task = new Task(description, deadline, employee);
+                task.setProject(project);
+                project.tasks.add(task);
+                Employee.addnewTask(employee, task);
+                LOGGER.info("Задача " + task.getDescription() + " была успешно добавлена в проект " + project.getName());
+            } else {
+                LOGGER.error("Ошибка добавления задачи в проект. Cотрудник с именем" + employeeName + " не был найден!");
+            }
+        } else {
+            LOGGER.error("Ошибка добавления задачи в проект. Проект с именем" + projectName + " не был найден!");
+        }
+
+    }
+
+    //метод вывода списка задач проекта на экран
+    public static void printAllTasks(String projectName){
+        if(isProjectExist(projectName)){
+            Project project = foundProjectByName(projectName);
+            System.out.println(project.tasks);
+        }
+
     }
 }

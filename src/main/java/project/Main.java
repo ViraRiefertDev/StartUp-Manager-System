@@ -1,9 +1,7 @@
 package project;
 
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.Scanner;
-import java.util.jar.JarOutputStream;
 
 public class Main {
     static Scanner scanner = new Scanner(System.in);
@@ -34,7 +32,7 @@ public class Main {
                     switch (choise){
                         case 0: {exit = true;
                             Project.serializeProjects();
-                            Employee.serializeProjects();
+                            Employee.serializeEmployee();
                             System.out.println("До свидания!");
                             break;}
                         case 1: managerProjects();break;
@@ -133,12 +131,7 @@ public class Main {
                         }
                         case 2: {
                             System.out.println("Вы выбрали обновление должности сотрудника");
-                            scanner.nextLine();
-                            System.out.println("Введите имя сотрудника:");
-                            String name = scanner.nextLine();
-                            System.out.println("Введите новую должность сотрудника");
-                            String newPosition = scanner.nextLine();
-                            Employee.positionUpdate(name,newPosition);
+                            updatePosition();
                             break;
                         }
                         case 3:{
@@ -158,6 +151,16 @@ public class Main {
 
     }
 
+    private static void updatePosition() {
+        scanner.nextLine();
+        System.out.println("Введите имя сотрудника:");
+        String name = scanner.nextLine();
+        System.out.println("Введите новую должность сотрудника");
+        String newPosition = scanner.nextLine();
+        Employee.positionUpdate(name,newPosition);
+
+    }
+
     private static void manageFinance(){
         int countOfOptions = 3;
         boolean exit = false;
@@ -165,9 +168,9 @@ public class Main {
             System.out.println("*********************************");
             System.out.println("Выберите действие:");
             System.out.println("0. Exit");
-            System.out.println("1. Провести финансовую операцию");
-            System.out.println("2. Показать все проведенные финансовые операции для проекта");
-            System.out.println("3. Показать баланс всех проектов");
+            System.out.println("1. Добавить доход");
+            System.out.println("2. Добавить расход");
+            System.out.println("3. Показать все проведенные финансовые операции для проекта");
             System.out.println("**********************************");
             System.out.print("Введите Ваш выбор: ");
             checkValueInt();
@@ -184,48 +187,25 @@ public class Main {
                             break;
                         }
                         case 1: {
-                            System.out.println("Вы выбрали провести финансовую операцию.");
+                            System.out.println("Вы выбрали добавление дохода.");
+                            addIncomeTransaction();
+                            break;
+                        }
+                        case 2:{
+                            System.out.println("Вы выбрали добавление расхода.");
+                            addExpenseTransaction();
+                            break;
+
+                        }
+                        case 3: {
+                            System.out.println("Вы выбрали показать все проведенные финансовые операции для проекта");
                             scanner.nextLine();
                             System.out.println("Введите имя проекта");
-                            String name = scanner.nextLine();
-                            System.out.println("Введите тип транзакции Доход/Расход:");
-                            String typeStr = scanner.nextLine();
-                            TypeOfTransaction type;
-                            if(typeStr.equalsIgnoreCase("доход")){
-                               type = TypeOfTransaction.INCOME;
-                            }else{
-                                type = TypeOfTransaction.EXPENSE;
-                            }
-                            System.out.println("Введите cумму транзакции (только положительные числа!)");
-                            checkValueDouble();
-                            double amount = scanner.nextDouble();
-                            System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
-                            String dataStr = scanner.next();
-                            LocalDate date = LocalDate.parse(dataStr);
-                            System.out.println("Введите категорию расхода:");
-                            String category = scanner.nextLine();
+                            String projectName = scanner.nextLine();
+                            Project.printAllTransactions(projectName);
+                            break;
+                        }
 
-                            System.out.println("");
-                            Project.makeTransaction(name,type,amount,date,category);
-                            break;
-                        }
-                        case 2: {
-                            System.out.println("Вы выбрали обновление должности сотрудника");
-                            scanner.nextLine();
-                            System.out.println("Введите имя сотрудника:");
-                            String name = scanner.nextLine();
-                            System.out.println("Введите новую должность сотрудника");
-                            String newPosition = scanner.nextLine();
-                            Employee.positionUpdate(name,newPosition);
-                            break;
-                        }
-                        case 3:{
-                            System.out.println("Вы выбрали Простмотр информации о всех сотрудниках.");
-                            System.out.println("*********************************");
-                            System.out.println("Список всех сотрудников");
-                            Employee.displayAllEmployees();
-                            break;
-                        }
 
                     }
                 }
@@ -235,10 +215,118 @@ public class Main {
         }
 
     }
-    private static void manageTasks(){
 
+    private static void addIncomeTransaction() {
+        scanner.nextLine();
+        System.out.println("Введите имя проекта");
+        String name = scanner.nextLine();
+        System.out.println("Введите cумму дохода (только положительные числа!)");
+        checkValueDouble();
+        double amount = scanner.nextDouble();
+        System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
+        String dataStr = scanner.next();
+        LocalDate date = LocalDate.parse(dataStr);
+        scanner.nextLine();
+        System.out.println("Введите категорию дохода:");
+        String category = scanner.nextLine();
+
+        System.out.println("");
+        Project.makeIncomeTransaction(name,amount,date,category);
+        return;
+    }
+    private static void addExpenseTransaction() {
+        scanner.nextLine();
+        System.out.println("Введите имя проекта");
+        String name = scanner.nextLine();
+        System.out.println("Введите cумму расхода (только положительные числа!)");
+        checkValueDouble();
+        double amount = scanner.nextDouble();
+        System.out.print("Введите дату транзакции в формате yyyy-MM-dd: ");
+        String dataStr = scanner.next();
+        LocalDate date = LocalDate.parse(dataStr);
+        scanner.nextLine();
+        System.out.println("Введите категорию расхода:");
+        String category = scanner.nextLine();
+
+        System.out.println("");
+        Project.makeExpenseTransaction(name,amount,date,category);
     }
 
+    private static void manageTasks(){
+        int countOfOptions = 3;
+        boolean exit = false;
+        while (!exit) {
+            System.out.println("*********************************");
+            System.out.println("Выберите действие:");
+            System.out.println("0. Exit");
+            System.out.println("1. Добавить новую задачу");
+            System.out.println("2. Посмотреть список всех задач проекта");
+            System.out.println("3. Посмотреть список всех задач сотрудника");
+            System.out.println("**********************************");
+            System.out.print("Введите Ваш выбор: ");
+            checkValueInt();
+            boolean isRigthChoise = false;
+            while (!isRigthChoise) {
+                int choise = scanner.nextInt();
+                if (!(choise >= 0 && choise <= countOfOptions)) {
+                    System.out.println("Введите число от 0 до " + countOfOptions);
+                } else {
+                    isRigthChoise = true;
+                    switch (choise) {
+                        case 0: {
+                            exit = true;
+                            break;
+                        }
+                        case 1: {
+                            System.out.println("Вы выбрали добавить новую задачу.");
+                            addNewTaskInProject();
+
+                            break;
+                        }
+                        case 2: {
+                            scanner.nextLine();
+                            System.out.println("Вы выбрали посмотреть список всех задач проекта");
+                            System.out.println("Введите название проекта");
+                            String projectName = scanner.nextLine();
+                            System.out.println("*********************************");
+                            System.out.println("Список всех задач проекта: " + projectName);
+                            Project.printAllTasks(projectName);
+
+                            break;
+                        }
+                        case 3: {
+                            scanner.nextLine();
+                            System.out.println("Вы выбрали посмотреть список всех задач сотрудника");
+                            System.out.println("Введите имя сотрудника");
+                            String employeeName = scanner.nextLine();
+                            System.out.println("*********************************");
+                            System.out.println("Список всех задач сотрудника: " + employeeName);
+                            Employee.printAllTasks(employeeName);
+                            break;
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addNewTaskInProject() {
+        scanner.nextLine();
+        System.out.println("Введите имя проекта");
+        String name = scanner.nextLine();
+        System.out.println("Введите описание задачи:");
+        String description = scanner.nextLine();
+        System.out.print("Введите дату дедлайна задачи в формате yyyy-MM-dd: ");
+        String dataStr = scanner.next();
+        LocalDate date = LocalDate.parse(dataStr);
+        scanner.nextLine();
+        System.out.println("Введите имя ответсвенного сотрудника");
+        String employeeName = scanner.nextLine();
+
+
+        Project.addNewTaskInProject(name,description,date,employeeName);
+    }
 
 
     private static void addNewProject(){

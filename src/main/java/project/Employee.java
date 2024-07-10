@@ -37,7 +37,7 @@ public class Employee implements Serializable {
         String fileName = "employee.ser";
         File file = new File(fileName);
         if (file.exists()) {
-            deserializeProjects();
+            deserializeEmployee();
         } else {
             allEmployees = new ArrayList<>();
         }
@@ -109,7 +109,7 @@ public class Employee implements Serializable {
 
     //------------------------------------------------------------------------------------
     //проверка существует ли такой сотрудник в списке
-    private static boolean isEmployeeExist(Employee employeeToCheck) {
+    public static boolean isEmployeeExist(Employee employeeToCheck) {
         if (!allEmployees.isEmpty()) {
             return allEmployees.stream()
                     .anyMatch(employee -> employee.getName().equals(employeeToCheck.getName()));
@@ -118,7 +118,11 @@ public class Employee implements Serializable {
         }
     }
 
-    private static boolean isEmployeeExist(String employeeName) {
+    public static Employee foundEmployeeByName(String employeeName){
+        return allEmployees.stream().filter(e -> e.getName().equals(employeeName)).findFirst().orElse(null);
+    }
+
+    public static boolean isEmployeeExist(String employeeName) {
         if (!allEmployees.isEmpty()) {
             return allEmployees.stream()
                     .anyMatch(project -> project.getName().equals(employeeName));
@@ -129,25 +133,45 @@ public class Employee implements Serializable {
     //-------------------------------------------------------------------------------------
 
     //Метод сериализации списка сотрудников
-    public static void serializeProjects() {
+    public static void serializeEmployee() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("employee.ser"))) {
             oos.writeObject(allEmployees);
-            LOGGER.info("Список проектов был сериализован в файл rojects.ser");
+            LOGGER.info("Список проектов был сериализован в файл employee.ser");
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
     }
 
     //Метод десериализации списка объектов
-    public static void deserializeProjects() {
+    public static void deserializeEmployee() {
 
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("employee.ser"))) {
             allEmployees = (List<Employee>) ois.readObject();
-            LOGGER.info("Файл projects.ser был успешно десериализован, и проекты сохранены в список проектов!");
+            LOGGER.info("Файл employee.ser был успешно десериализован, и сотрудники сохранены в список сотрудников!");
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.error(e.getMessage());
         }
     }
 
+    //метод добавления задачи в список задач
+    public static boolean addnewTask(Employee employee, Task task) {
+
+        employee.tasks.add(task);
+        LOGGER.info("Задача " + task.getDescription() + " была успешно добавлена в список задач сотрудника " + employee.getName());
+        return true;
+
+    }
+
+    //метод вывода списка задач сотрудника на экран
+    public static void printAllTasks(String employeeName){
+        if(isEmployeeExist(employeeName)){
+            Employee employee = foundEmployeeByName(employeeName);
+            System.out.println(employee.tasks);
+        }
+
+    }
 
 }
+
+
+
