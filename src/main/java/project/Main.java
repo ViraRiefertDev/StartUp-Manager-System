@@ -225,7 +225,6 @@ public class Main {
             System.out.println("**********************************");
             System.out.print("Введите Ваш выбор: ");
             checkValueInt();
-
             int choise = scanner.nextInt();
             switch (choise) {
                 case 0: {
