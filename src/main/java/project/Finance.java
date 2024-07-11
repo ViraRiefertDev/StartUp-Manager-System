@@ -47,8 +47,8 @@ public class Finance implements Serializable {
 
     //метод добавления новой транзакции в лист
     public void addNewTransaction(TypeOfTransaction type, double amount, LocalDate date, String category) {
-        if (amount < 0) {
-            LOGGER.error("Денежная сумма не может быть < 0");
+        if (amount <= 0) {
+            LOGGER.error("Денежная сумма должна быть > 0");
         } else {
             if(type == TypeOfTransaction.EXPENSE&&balance<=amount){
                 LOGGER.error("Транзакция невозможно! Не хватает денег на счету!");

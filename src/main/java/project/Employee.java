@@ -136,7 +136,7 @@ public class Employee implements Serializable {
     public static void serializeEmployee() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("employee.ser"))) {
             oos.writeObject(allEmployees);
-            LOGGER.info("Список проектов был сериализован в файл employee.ser");
+            LOGGER.info("Список сотрудников был сериализован в файл employee.ser");
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }

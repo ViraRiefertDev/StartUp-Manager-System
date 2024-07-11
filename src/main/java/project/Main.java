@@ -34,6 +34,8 @@ public class Main {
                     exit = true;
                     Project.serializeProjects();
                     Employee.serializeEmployee();
+                    scanner.close();
+                    LOGGER.info("Сканнер закрыт!");
                     System.out.println("До свидания!");
                     break;
                 }
