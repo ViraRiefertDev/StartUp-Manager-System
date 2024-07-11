@@ -13,7 +13,6 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-
         System.out.println("Добро пожаловать в систему управления стартапом!");
 
         boolean exit = false;
@@ -222,6 +221,7 @@ public class Main {
             System.out.println("2. Посмотреть список всех задач проекта");
             System.out.println("3. Посмотреть список всех задач сотрудника");
             System.out.println("4. Изменить статус задачи проекта");
+            System.out.println("5. Проверить все задачи на дедлайн");
             System.out.println("**********************************");
             System.out.print("Введите Ваш выбор: ");
             checkValueInt();
@@ -250,43 +250,24 @@ public class Main {
                 }
                 case 4: {
                     System.out.println("Вы выбрали изменить статус задачи проекта");
-                    scanner.nextLine();
-                    System.out.println("Введите название проекта");
-                    String projectName = scanner.nextLine();
-                    System.out.println("Введите описание задачи, статус которой вы хотите изменить");
-                    String taskDescription = scanner.nextLine();
-                    TaskStatus newStatus = null;
-                    while (newStatus == null) {
-                        System.out.println("Введите новый статус задачи NEW/IN_PROGRESS/COMPLETED");
-                        String newTaskStatusStr = scanner.nextLine();
-                        switch (newTaskStatusStr) {
-                            case "NEW": {
-                                newStatus = TaskStatus.NEW;
-                                break;
-                            }
-                            case "IN_PROGRESS": {
-                                newStatus = TaskStatus.IN_PROGRESS;
-                                break;
-                            }
-                            case "COMPLETED": {
-                                newStatus = TaskStatus.COMPLETED;
-                                break;
-                            }
-                            default: {
-                                LOGGER.warn("Вы ввели инвалидный статус.");
-                            }
-                        }
-                    }
-                    Project.updateTaskStatusInProject(projectName,taskDescription,newStatus);
+                    updateTaskStatus();
+                    break;
+                }
+                case 5: {
+                    System.out.println("Вы выбрали проверить все задачи на дедлайн");
+                    Project.checkDeadlines();
+                    break;
                 }
                 default: {
-                    System.out.println("Введите число от 0 до " + 3);
+                    System.out.println("Введите число от 0 до " + 5);
                     break;
 
                 }
             }
         }
     }
+
+
 
     //-------------------------------------------------
 
@@ -515,6 +496,37 @@ public class Main {
         System.out.println("*********************************");
         System.out.println("Список всех задач сотрудника: " + employeeName);
         Employee.printAllTasks(employeeName);
+    }
+
+    private static void updateTaskStatus() {
+        scanner.nextLine();
+        System.out.println("Введите название проекта");
+        String projectName = scanner.nextLine();
+        System.out.println("Введите описание задачи, статус которой вы хотите изменить");
+        String taskDescription = scanner.nextLine();
+        TaskStatus newStatus = null;
+        while (newStatus == null) {
+            System.out.println("Введите новый статус задачи NEW/IN_PROGRESS/COMPLETED");
+            String newTaskStatusStr = scanner.nextLine();
+            switch (newTaskStatusStr) {
+                case "NEW": {
+                    newStatus = TaskStatus.NEW;
+                    break;
+                }
+                case "IN_PROGRESS": {
+                    newStatus = TaskStatus.IN_PROGRESS;
+                    break;
+                }
+                case "COMPLETED": {
+                    newStatus = TaskStatus.COMPLETED;
+                    break;
+                }
+                default: {
+                    LOGGER.warn("Вы ввели инвалидный статус.");
+                }
+            }
+        }
+        Project.updateTaskStatusInProject(projectName,taskDescription,newStatus);
     }
 //-------------------------------------------------
 

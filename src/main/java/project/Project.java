@@ -14,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -316,6 +317,43 @@ public class Project implements Serializable {
             LOGGER.error("Проект с именем " + projectName + " не найден!");
         }
     }
+
+    //метод возвращает копию листов
+    public List<Task> getTasks(){
+        return new ArrayList<>(tasks);
+    }
+
+    //метод проверки всех задач на своевременное выполнение
+    public static void checkDeadlines(){
+        List<Task> allTasks = new ArrayList<>();
+        for (Project project : allProjects) {
+          List<Task> projectTasks =  project.getTasks();
+            allTasks.addAll(projectTasks);
+        }
+        //фильтрация списка задач, чтоб туда входили задачи только с статусом NEU и IN_PROCESS
+        //Упорядочивание элементов по датам
+        List<Task> filteredAndSortedTaks = allTasks.stream()
+                .filter(task->task.getStatus()==TaskStatus.NEW||task.getStatus()==TaskStatus.IN_PROGRESS)
+                .sorted(Comparator.comparing(Task::getDeadline))
+                .collect(Collectors.toList());
+
+        for (Task task : filteredAndSortedTaks) {
+            if(task.getDeadline().isBefore(LocalDate.now())){
+                System.out.print("\uD83D\uDE21");
+            }else if(task.getDeadline().isEqual(LocalDate.now())){
+                System.out.print("\uD83D\uDE2C");
+            }else {
+                System.out.print("\uD83D\uDE07");
+            }
+           formattedPrintTask(task);
+        }
+    }
+
+    private static void formattedPrintTask(Task task){
+        System.out.println(task.getDeadline() + " " + task.getEmployee().getName() + " " +task.getStatus() +"\nПроект: "+ task.getProject().getName() + "\n" + task.getDescription());
+        System.out.println("--------");
+    }
+
 
 
 }
