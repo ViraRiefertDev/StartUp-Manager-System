@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Finance implements Serializable {
+public class Finance implements Serializable{
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LoggerFactory.getLogger(Finance.class);
     @Getter
@@ -27,7 +27,7 @@ public class Finance implements Serializable {
         private TypeOfTransaction type;//расход или доход
         private double amount; //денежная сумма
         private LocalDate date;//дата транзакции
-        private String category; //категория расходов
+        private String category; //категория транзакции
 
         public Transaction(TypeOfTransaction type, double amount, LocalDate date, String category) {
             this.type = type;
@@ -85,7 +85,7 @@ public class Finance implements Serializable {
         double totalIncome = 0;
         for (Transaction transaction : transactions) {
             if(transaction.type==TypeOfTransaction.INCOME){
-              totalIncome += transaction.amount;
+                totalIncome += transaction.amount;
             }
         }
         return totalIncome;
@@ -101,6 +101,5 @@ public class Finance implements Serializable {
         }
         return totalExpense;
     }
-
 
 }

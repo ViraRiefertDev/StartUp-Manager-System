@@ -51,12 +51,7 @@ class FinanceTest {
     }
 
 
-//    @Test
-//    void testGetTotalIncome() {
-//        finance.addNewTransaction(TypeOfTransaction.INCOME, 500.0, LocalDate.now(), "Investment");
-//        finance.addNewTransaction(TypeOfTransaction.INCOME, 200.0, LocalDate.now(), "Bonus");
-//        assertEquals(700.0, finance.getTotalIncome());
-//    }
+
 
     @ParameterizedTest
     @CsvFileSource(resources = "/dataIncome.csv",numLinesToSkip = 1)
@@ -74,11 +69,5 @@ class FinanceTest {
         assertEquals(totalExtense,finance.getTotalExpense());
     }
 
-//
-//    @Test
-//    void testGetTotalExpense() {
-//        finance.addNewTransaction(TypeOfTransaction.EXPENSE, 100.0, LocalDate.now(), "Supplies");
-//        finance.addNewTransaction(TypeOfTransaction.EXPENSE, 300.0, LocalDate.now(), "Marketing");
-//        assertEquals(400.0, finance.getTotalExpense());
-//    }
+
 }

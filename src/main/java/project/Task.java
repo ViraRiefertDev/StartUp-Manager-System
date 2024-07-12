@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+
 @Getter
 public class Task implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -36,8 +37,5 @@ public class Task implements Serializable {
     public void updateTaskStatus(TaskStatus newStatus){
         this.status = newStatus;
     }
-
-
-
 
 }

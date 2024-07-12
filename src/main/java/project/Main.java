@@ -3,7 +3,6 @@ package project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -32,8 +31,8 @@ public class Main {
             switch (choise) {
                 case 0: {
                     exit = true;
-                    Project.serializeProjects();
-                    Employee.serializeEmployee();
+                    ProjectManager.serializeProjects();
+                    EmployeeManager.serializeEmployee();
                     scanner.close();
                     LOGGER.info("Сканнер закрыт!");
                     System.out.println("До свидания!");
@@ -92,7 +91,7 @@ public class Main {
                     System.out.println("Вы выбрали просмотр всех проектов");
                     System.out.println("*********************************");
                     System.out.println("Список всех проектов");
-                    Project.displayAllProjects();
+                    ProjectManager.displayAllProjects();
                     break;
                 }
                 case 3: {
@@ -145,7 +144,7 @@ public class Main {
                     System.out.println("Вы выбрали Простмотр информации о всех сотрудниках.");
                     System.out.println("*********************************");
                     System.out.println("Список всех сотрудников");
-                    Employee.displayAllEmployees();
+                    EmployeeManager.displayAllEmployees();
                     break;
                 }
                 default: {
@@ -195,12 +194,12 @@ public class Main {
                     scanner.nextLine();
                     System.out.println("Введите имя проекта");
                     String projectName = scanner.nextLine();
-                    Project.printAllTransactions(projectName);
+                    ProjectManager.printAllTransactions(projectName);
                     break;
                 }
                 case 4: {
                     System.out.println("Вы выбрали показать фин. статистику по всем проектам");
-                    Project.displayFinanceStatistics();
+                    ProjectManager.displayFinanceStatistics();
                     break;
                 }
                 default: {
@@ -257,7 +256,7 @@ public class Main {
                 }
                 case 5: {
                     System.out.println("Вы выбрали проверить все задачи на дедлайн");
-                    Project.checkDeadlines();
+                    ProjectManager.checkDeadlines();
                     break;
                 }
                 default: {
@@ -289,7 +288,7 @@ public class Main {
 
 
         Project newProject = new Project(projectName, projectDescription, projectBudget);
-        Project.addNewProject(newProject);
+        ProjectManager.addNewProject(newProject);
     }
 
     private static void updateProjectInfo() {
@@ -317,7 +316,7 @@ public class Main {
                     scanner.nextLine();
                     System.out.println("Введите новое название проекта: ");
                     String newProjectName = scanner.nextLine();
-                    Project.nameUpdate(projectName, newProjectName);
+                    ProjectManager.nameUpdate(projectName, newProjectName);
                     break;
                 }
                 case 2: {
@@ -326,7 +325,7 @@ public class Main {
 
                     System.out.println("Введите новое описание проекта");
                     String description = scanner.nextLine();
-                    Project.descriptionUpdate(projectName, description);
+                    ProjectManager.descriptionUpdate(projectName, description);
                     break;
                 }
                 case 3: {
@@ -334,7 +333,7 @@ public class Main {
                     System.out.println("Введите новый бюджет проекта");
                     checkValueDouble();
                     double newBudget = scanner.nextDouble();
-                    Project.budgetUpdate(projectName, newBudget);
+                    ProjectManager.budgetUpdate(projectName, newBudget);
                     break;
                 }
                 case 4: {
@@ -360,7 +359,7 @@ public class Main {
         } else {
             projectStatus = ProjectStatus.PASSIV;
         }
-        Project.statusUpdate(projectName, projectStatus);
+        ProjectManager.statusUpdate(projectName, projectStatus);
     }
 
 
@@ -386,7 +385,7 @@ public class Main {
             }
         }
         Employee newEmployee = new Employee(name, position, date);
-        Employee.addNewEmployee(newEmployee);
+        EmployeeManager.addNewEmployee(newEmployee);
     }
 
     private static void updatePosition() {
@@ -395,7 +394,7 @@ public class Main {
         String name = scanner.nextLine();
         System.out.println("Введите новую должность сотрудника");
         String newPosition = scanner.nextLine();
-        Employee.positionUpdate(name, newPosition);
+        EmployeeManager.positionUpdate(name, newPosition);
 
     }
 
@@ -425,7 +424,7 @@ public class Main {
         String category = scanner.nextLine();
 
         System.out.println("");
-        Project.makeIncomeTransaction(name, amount, date, category);
+        ProjectManager.makeIncomeTransaction(name, amount, date, category);
     }
 
     private static void addExpenseTransaction() {
@@ -450,7 +449,7 @@ public class Main {
         String category = scanner.nextLine();
 
         System.out.println("");
-        Project.makeExpenseTransaction(name, amount, date, category);
+        ProjectManager.makeExpenseTransaction(name, amount, date, category);
     }
 
     //-------------------------------------------------
@@ -461,8 +460,8 @@ public class Main {
         scanner.nextLine();
         System.out.println("Введите имя проекта");
         String name = scanner.nextLine();
-        Project project = Project.foundProjectByName(name);
-        boolean isProjectExist = Project.isProjectExist(name);
+        Project project = ProjectManager.foundProjectByName(name);
+        boolean isProjectExist = ProjectManager.isProjectExist(name);
         if (!isProjectExist) {
             LOGGER.warn("Проекта с таким название не найдено!");
         } else if (project.getStatus() == ProjectStatus.PASSIV) {
@@ -478,7 +477,7 @@ public class Main {
             String employeeName = scanner.nextLine();
 
 
-            Project.addNewTaskInProject(name, description, date, employeeName);
+            ProjectManager.addNewTaskInProject(name, description, date, employeeName);
         }
     }
 
@@ -488,7 +487,7 @@ public class Main {
         String projectName = scanner.nextLine();
         System.out.println("*********************************");
         System.out.println("Список всех задач проекта: " + projectName);
-        Project.printAllTasks(projectName);
+        ProjectManager.printAllTasks(projectName);
     }
 
     private static void showAllEmployeeTasks() {
@@ -497,7 +496,7 @@ public class Main {
         String employeeName = scanner.nextLine();
         System.out.println("*********************************");
         System.out.println("Список всех задач сотрудника: " + employeeName);
-        Employee.printAllTasks(employeeName);
+        EmployeeManager.printAllTasks(employeeName);
     }
 
     private static void updateTaskStatus() {
@@ -528,7 +527,7 @@ public class Main {
                 }
             }
         }
-        Project.updateTaskStatusInProject(projectName,taskDescription,newStatus);
+        ProjectManager.updateTaskStatusInProject(projectName,taskDescription,newStatus);
     }
 //-------------------------------------------------
 
